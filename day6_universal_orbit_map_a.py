@@ -3,7 +3,7 @@ import networkx as nx
 def count_orbits(G):
     count = 0
     for node in G.nodes:
-        count += len(list(nx.edge_dfs(G,node, orientation='reverse')))
+        count += len(list(nx.edge_dfs(G, node, orientation='reverse')))
     return count
 
 if __name__ == '__main__':

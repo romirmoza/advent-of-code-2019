@@ -5,12 +5,13 @@ if __name__ == '__main__':
     desired_output = 19690720
     file = open('day2_input.txt', 'r')
     intcode_inital = map(int, file.read().split(','))
+    computer = intcode_computer()
 
     found = 0
     for noun in range(100):
         for verb in range(100):
             intcode = copy.deepcopy(intcode_inital)
-            computer = intcode_computer(intcode)
+            computer.set_intcode(intcode)
             computer.alarm1202(noun, verb)
             computer.intcode_parser()
             if computer.get_intcode()[0] == desired_output:

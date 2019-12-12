@@ -19,20 +19,45 @@ class intcode_computer:
         if opcode == 1:
             param1 = self.__get_parameter(pc + 1, mode1)
             param2 = self.__get_parameter(pc + 2, mode2)
-            self.__set_parameter(pc + 3, mode3, param1 + param2)
+            self.__set_parameter(pc + 3, param1 + param2)
             pc += 4
         elif opcode == 2:
             param1 = self.__get_parameter(pc + 1, mode1)
             param2 = self.__get_parameter(pc + 2, mode2)
-            self.__set_parameter(pc + 3, mode3, param1 * param2)
+            self.__set_parameter(pc + 3, param1 * param2)
             pc += 4
         elif opcode == 3:
-            self.__set_parameter(pc + 1, mode1, self.input)
+            self.__set_parameter(pc + 1, self.input)
             pc += 2
         elif opcode == 4:
             param1 = self.__get_parameter(pc + 1, mode1)
             self.output = self.output + str(param1) + " "
             pc += 2
+        elif opcode == 5:
+            param1 = self.__get_parameter(pc + 1, mode1)
+            param2 = self.__get_parameter(pc + 2, mode2)
+            pc = param2 if param1 else pc + 3
+        elif opcode == 6:
+            param1 = self.__get_parameter(pc + 1, mode1)
+            param2 = self.__get_parameter(pc + 2, mode2)
+            pc = param2 if not param1 else pc + 3
+        elif opcode == 7:
+            param1 = self.__get_parameter(pc + 1, mode1)
+            param2 = self.__get_parameter(pc + 2, mode2)
+            if param1 < param2:
+                self.__set_parameter(pc + 3, 1)
+            else:
+                self.__set_parameter(pc + 3, 0)
+            pc += 4
+        elif opcode == 8:
+            param1 = self.__get_parameter(pc + 1, mode1)
+            param2 = self.__get_parameter(pc + 2, mode2)
+            param3 = self.__get_parameter(pc + 3, mode3)
+            if param1 == param2:
+                self.__set_parameter(pc + 3, 1)
+            else:
+                self.__set_parameter(pc + 3, 0)
+            pc += 4
         return pc
 
     def set_intcode(self, intcode):
@@ -46,10 +71,8 @@ class intcode_computer:
             return self.intcode[pos]
         return self.intcode[self.intcode[pos]]       # position mode
 
-    def __set_parameter(self, pos, mode, result):
-        if mode:        # immediate mode
-            self.intcode[pos] = result
-        self.intcode[self.intcode[pos]] = result     # position mode
+    def __set_parameter(self, pos, result):
+        self.intcode[self.intcode[pos]] = result     # only position mode is valid
 
     def __decipher_instruction(self, pc):
         code = self.intcode[pc]

@@ -98,9 +98,9 @@ class intcode_computer:
         opcode = code % 100
         code = code // 100
         mode1 = code % 10
-        code = code / 10
+        code = code // 10
         mode2 = code % 10
-        code = code / 10
+        code = code // 10
         mode3 = code % 10
 
         return [opcode, mode1, mode2, mode3]

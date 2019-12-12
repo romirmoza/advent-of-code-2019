@@ -12,7 +12,7 @@ if __name__ == '__main__':
         for verb in range(100):
             intcode = copy.deepcopy(intcode_inital)
             computer.set_intcode(intcode)
-            computer.alarm1202(noun, verb)
+            computer.set_alarm1202(noun, verb)
             computer.intcode_parser()
             if computer.get_intcode()[0] == desired_output:
                 found = 1

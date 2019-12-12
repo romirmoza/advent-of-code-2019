@@ -5,6 +5,6 @@ if __name__ == '__main__':
     intcode = map(int, file.read().split(','))
 
     computer = intcode_computer(intcode)
-    computer.alarm1202()
+    computer.set_alarm1202()
     computer.intcode_parser()
     print('Output of the IntCode = {}'.format(computer.get_intcode()[0]))

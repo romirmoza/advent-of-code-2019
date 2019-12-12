@@ -4,7 +4,7 @@ from intcode_computer import intcode_computer
 if __name__ == '__main__':
     desired_output = 19690720
     file = open('day2_input.txt', 'r')
-    intcode_inital = map(int, file.read().split(','))
+    intcode_inital = list(map(int, file.read().split(',')))
     computer = intcode_computer()
 
     found = 0

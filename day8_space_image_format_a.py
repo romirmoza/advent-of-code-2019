@@ -1,10 +1,10 @@
 if __name__ == '__main__':
-    l = 25
-    b = 6
+    l = 6
+    b = 25
     size = l * b
 
     file = open('day8_input.txt', 'r')
-    image = map(int, list(file.read().strip()))
+    image = list(map(int, list(file.read().strip())))
     min_zeroes = size
     for i in range(len(image) // size):
         layer = image[i * size : (i+1) * size]

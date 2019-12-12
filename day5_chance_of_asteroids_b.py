@@ -5,6 +5,6 @@ if __name__ == '__main__':
     intcode = list(map(int, file.read().split(',')))
 
     id = 5
-    computer = intcode_computer(intcode, id)
+    computer = intcode_computer(intcode, [id])
     computer.intcode_parser()
     print('Output of the IntCode = {}'.format(computer.get_output()))

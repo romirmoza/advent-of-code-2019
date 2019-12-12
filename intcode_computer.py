@@ -1,67 +1,86 @@
 class intcode_computer:
 
-    def __init__(self, intcode=[], input=1):
+    def __init__(self, intcode=[], input=[1]):
         self.intcode = intcode
         self.input = input
-        self.output = ""
+        self.inputcounter = 0
+        self.pc = 0
+        self.output = ''
 
     def set_alarm1202(self, noun=12, verb=2):
         self.intcode[1] = noun
         self.intcode[2] = verb
 
-    def intcode_parser(self):
-        pc = 0
-        while self.intcode[pc] != 99:
-            [opcode, mode1, mode2, mode3] = self.__decipher_instruction(pc)
-            pc = self.__execute_instruction(pc, opcode, mode1, mode2, mode3)
+    def intcode_parse_until_output(self):
+        break_after_execution = False
+        while self.intcode[self.pc] != 99:
+            if self.intcode[self.pc] == 4:
+                break_after_execution = True
+            [opcode, mode1, mode2, mode3] = self.__decipher_instruction()
+            self.__execute_instruction(opcode, mode1, mode2, mode3)
+            if break_after_execution:
+                break
 
-    def __execute_instruction(self, pc, opcode, mode1, mode2, mode3):
+    def intcode_parser(self):
+        while self.intcode[self.pc] != 99:
+            [opcode, mode1, mode2, mode3] = self.__decipher_instruction()
+            self.__execute_instruction(opcode, mode1, mode2, mode3)
+
+    def __execute_instruction(self, opcode, mode1, mode2, mode3):
         if opcode == 1:
-            param1 = self.__get_parameter(pc + 1, mode1)
-            param2 = self.__get_parameter(pc + 2, mode2)
-            self.__set_parameter(pc + 3, param1 + param2)
-            pc += 4
+            param1 = self.__get_parameter(self.pc + 1, mode1)
+            param2 = self.__get_parameter(self.pc + 2, mode2)
+            self.__set_parameter(self.pc + 3, param1 + param2)
+            self.pc += 4
         elif opcode == 2:
-            param1 = self.__get_parameter(pc + 1, mode1)
-            param2 = self.__get_parameter(pc + 2, mode2)
-            self.__set_parameter(pc + 3, param1 * param2)
-            pc += 4
+            param1 = self.__get_parameter(self.pc + 1, mode1)
+            param2 = self.__get_parameter(self.pc + 2, mode2)
+            self.__set_parameter(self.pc + 3, param1 * param2)
+            self.pc += 4
         elif opcode == 3:
-            self.__set_parameter(pc + 1, self.input)
-            pc += 2
+            self.__set_parameter(self.pc + 1, self.input[self.inputcounter])
+            self.inputcounter += 1
+            self.pc += 2
         elif opcode == 4:
-            param1 = self.__get_parameter(pc + 1, mode1)
+            param1 = self.__get_parameter(self.pc + 1, mode1)
             self.output = self.output + str(param1) + " "
-            pc += 2
+            self.pc += 2
         elif opcode == 5:
-            param1 = self.__get_parameter(pc + 1, mode1)
-            param2 = self.__get_parameter(pc + 2, mode2)
-            pc = param2 if param1 else pc + 3
+            param1 = self.__get_parameter(self.pc + 1, mode1)
+            param2 = self.__get_parameter(self.pc + 2, mode2)
+            self.pc = param2 if param1 else self.pc + 3
         elif opcode == 6:
-            param1 = self.__get_parameter(pc + 1, mode1)
-            param2 = self.__get_parameter(pc + 2, mode2)
-            pc = param2 if not param1 else pc + 3
+            param1 = self.__get_parameter(self.pc + 1, mode1)
+            param2 = self.__get_parameter(self.pc + 2, mode2)
+            self.pc = param2 if not param1 else self.pc + 3
         elif opcode == 7:
-            param1 = self.__get_parameter(pc + 1, mode1)
-            param2 = self.__get_parameter(pc + 2, mode2)
+            param1 = self.__get_parameter(self.pc + 1, mode1)
+            param2 = self.__get_parameter(self.pc + 2, mode2)
             if param1 < param2:
-                self.__set_parameter(pc + 3, 1)
+                self.__set_parameter(self.pc + 3, 1)
             else:
-                self.__set_parameter(pc + 3, 0)
-            pc += 4
+                self.__set_parameter(self.pc + 3, 0)
+            self.pc += 4
         elif opcode == 8:
-            param1 = self.__get_parameter(pc + 1, mode1)
-            param2 = self.__get_parameter(pc + 2, mode2)
-            param3 = self.__get_parameter(pc + 3, mode3)
+            param1 = self.__get_parameter(self.pc + 1, mode1)
+            param2 = self.__get_parameter(self.pc + 2, mode2)
+            param3 = self.__get_parameter(self.pc + 3, mode3)
             if param1 == param2:
-                self.__set_parameter(pc + 3, 1)
+                self.__set_parameter(self.pc + 3, 1)
             else:
-                self.__set_parameter(pc + 3, 0)
-            pc += 4
-        return pc
+                self.__set_parameter(self.pc + 3, 0)
+            self.pc += 4
+        return self.pc
 
     def set_intcode(self, intcode):
         self.intcode = intcode
+
+    def set_input(self, input):
+        self.input = input
+        self.inputcounter = 0
+
+    def extend_input(self, input):
+        self.input.extend(input)
 
     def get_intcode(self):
         return self.intcode
@@ -74,8 +93,8 @@ class intcode_computer:
     def __set_parameter(self, pos, result):
         self.intcode[self.intcode[pos]] = result     # only position mode is valid
 
-    def __decipher_instruction(self, pc):
-        code = self.intcode[pc]
+    def __decipher_instruction(self):
+        code = self.intcode[self.pc]
         opcode = code % 100
         code = code // 100
         mode1 = code % 10
@@ -86,5 +105,18 @@ class intcode_computer:
 
         return [opcode, mode1, mode2, mode3]
 
+    def reset(self):
+        self.inputcounter = 0
+        self.pc = 0
+        self.output = ''
+
     def get_output(self):
         return self.output
+
+    def clear_output(self):
+        self.output = ''
+
+    def has_halted(self):
+        if self.intcode[self.pc] == 99:
+            return 1
+        return 0

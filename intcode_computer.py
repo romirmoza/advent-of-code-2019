@@ -1,6 +1,6 @@
 class intcode_computer:
 
-    def __init__(self, intcode=[], input=[1,1]):
+    def __init__(self, intcode=[], input=[1]):
         self.intcode = intcode
         self.input = input
         self.inputcounter = 0
@@ -91,7 +91,7 @@ class intcode_computer:
 
     def __get_parameter(self, pos, mode):
         if mode == 0:          # position mode
-            if self.intcode[pos] > len(self.intcode) - 1:       # if memory location is out the initial program req
+            if self.intcode[pos] > len(self.intcode) - 1:       # requires allocating more memory
                     return 0
             return self.intcode[self.intcode[pos]]
         elif mode == 1:        # immediate mode
@@ -105,7 +105,7 @@ class intcode_computer:
 
 
     def __set_parameter(self, pos, mode, result):
-        # only position mode is valid
+        # only position mode and relative mode are valid
         if mode == 0:
             if self.intcode[pos] > len(self.intcode) - 1: # requires allocating more memory
                 self.intcode = self.intcode + [0 for _ in range(self.intcode[pos] - len(self.intcode) + 1)]

@@ -15,11 +15,9 @@ class intcode_computer:
     def intcode_parse_until_output(self):
         break_after_execution = False
         while self.intcode[self.pc] != 99:
-            if self.intcode[self.pc] == 4:
-                break_after_execution = True
             [opcode, mode1, mode2, mode3] = self.__decipher_instruction()
             self.__execute_instruction(opcode, mode1, mode2, mode3)
-            if break_after_execution:
+            if opcode == 4:
                 break
 
     def intcode_parser(self):

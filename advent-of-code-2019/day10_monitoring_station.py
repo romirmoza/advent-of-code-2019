@@ -58,7 +58,14 @@ def vaporization_order(asteroid, asteroid_list):
     order_list = get_order_from_polar(theta_list)
     return order_list
 
-
+def max_visibility_asteroid(asteroid_list):
+    max_visibility = 0
+    for asteroid in asteroid_list:
+        visibile_count = count_visible_asteroids(asteroid, asteroid_list)
+        if visibile_count > max_visibility:
+            max_visibility = visibile_count
+            max_visibility_asteroid = asteroid
+    return max_visibility_asteroid, max_visibility
 if __name__ == '__main__':
     N = 200
     file = open('day10_input.txt', 'r')
@@ -68,20 +75,16 @@ if __name__ == '__main__':
     for i, row in enumerate(input_map):
         asteroid_list.extend([(j, i) for j, x in enumerate(list(row)) if x == '#'])
 
-    max_count = 0
-    for asteroid in asteroid_list:
-        count = count_visible_asteroids(asteroid, asteroid_list)
-        if count > max_count:
-            max_count = count
-            max_count_asteroid = asteroid
+    # part a
+    max_visibility_asteroid, max_visibility = max_visibility_asteroid(asteroid_list)
+    print('Best location for a new monitoring station = {}, visible asteroids = {}'.format(max_visibility_asteroid, max_visibility))
 
-    print('Best location for a new monitoring station = {}, visible asteroids = {}'.format(max_count_asteroid, max_count))
+    # part b
+    vaporization_order = vaporization_order(max_visibility_asteroid, asteroid_list)
 
-    order_list = vaporization_order(max_count_asteroid, asteroid_list)
+    print('Vaporization Order')
+    for i, x in enumerate(vaporization_order):
+        print('Vaporized asteroid number {0:>3} = {1}'.format(i+1, x))
 
-    print('Vaporization Order = ')
-    for i, x in enumerate(order_list):
-        print('Vaporizated asteriod number {0:>3} = {1}'.format(i+1, x))
-
-    answer = order_list[N-1][0] * 100 + order_list[N-1][1]
-    print('Answer = {}'.format(answer))
+    answer = vaporization_order[N-1][0] * 100 + vaporization_order[N-1][1]
+    print('200th asteroid = {}'.format(answer))

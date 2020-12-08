@@ -20,13 +20,9 @@ def move_robot(robot, dir):
     robot[0] = (x, y)
     return robot
 
-if __name__ == '__main__':
-    file = open('day11_input.txt', 'r')
-    intcode = list(map(int, file.read().split(',')))
-
-    input = [1]
-    robot = [(0, 0), 90]      # robot intial coordinates, orientation
+def run_emergency_hull_painting_robot(input, robot_state):
     whites = set()
+    visited = set()
     computer = intcode_computer(intcode, input)
     while 1:
         computer.intcode_parse_until_output()
@@ -34,12 +30,15 @@ if __name__ == '__main__':
         if computer.has_halted():
             break
         color, dir = list(map(int, computer.get_output().split()))
-        whites.add(robot[0]) if color else whites.discard(robot[0])
-        robot = move_robot(robot, dir)
-        input = [1] if robot[0] in whites else [0]
+        visited.add(robot_state[0])
+        whites.add(robot_state[0]) if color else whites.discard(robot_state[0])
+        robot_state = move_robot(robot_state, dir)
+        input = [1] if robot_state[0] in whites else [0]
         computer.extend_input(input)
         computer.clear_output()
+    return whites, visited
 
+def plot_registration_identifier(whites):
     max_x = max(p[0] for p in whites)
     max_y = max(p[1] for p in whites)
     min_x = min(p[0] for p in whites)
@@ -51,3 +50,23 @@ if __name__ == '__main__':
 
     plt.imshow(id.T, cmap='gray')
     plt.show()
+    return
+
+if __name__ == '__main__':
+    file = open('day11_input.txt', 'r')
+    intcode = list(map(int, file.read().split(',')))
+
+    # part a
+    input = [0]
+    robot_state = [(0, 0), 90]      # robot intial coordinates, orientation
+    whites, visited = run_emergency_hull_painting_robot(input, robot_state)
+
+    print('Number of panels visited = {}'.format(len(visited)))
+
+    # part b
+    input = [1]
+    robot_state = [(0, 0), 90]      # robot intial coordinates, orientation
+    whites, visited = run_emergency_hull_painting_robot(input, robot_state)
+
+    plot_registration_identifier(whites)
+

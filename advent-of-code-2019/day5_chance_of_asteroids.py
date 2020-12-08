@@ -7,3 +7,8 @@ if __name__ == '__main__':
     computer = intcode_computer(intcode)
     computer.intcode_parser()
     print('Output of the IntCode = {}'.format(computer.get_output()))
+
+    id = 5
+    computer = intcode_computer(intcode, [id])
+    computer.intcode_parser()
+    print('Output of the IntCode = {}'.format(computer.get_output()))
